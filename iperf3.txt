@@ -1,0 +1,8 @@
+Server side:
+1. ipconfig
+2. C:> cd iperf3.1.4_64
+3. C:\iperf3.1.4_64> iperf3.exe -s
+
+Client side:
+1. C:> cd iperf3.1.4_64
+2. C:\iperf3.1.4_64> iperf3.exe -c 192.168.34.18

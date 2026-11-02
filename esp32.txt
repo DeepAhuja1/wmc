@@ -1,0 +1,362 @@
+ESP32 PRACTICAL FOR BLUETOOTH AND WIFI SCANNING
+
+Step 1: Check that Arduino IDE is installed
+Open the Arduino IDE.
+Go to:
+File → Preferences
+In Additional Boards Manager URLs, add:
+https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
+
+Click OK.
+________________________________________
+Step 2: Install ESP32 Board Package
+Go to
+Tools → Board → Boards Manager
+
+Search:
+ESP32
+
+Install:
+esp32 by Espressif Systems
+
+Wait until installation finishes.
+________________________________________
+Step 3: Connect ESP32
+Connect your ESP32 using the USB cable.
+Go to
+Tools → Port
+
+Select your COM port, for example:
+COM5
+
+Then choose the correct board.
+For most ESP32 Dev Boards:
+Tools → Board → ESP32 Arduino → ESP32 Dev Module
+
+________________________________________
+Step 4: Test the connection
+Upload a simple Blink sketch.
+void setup() {
+  pinMode(2, OUTPUT);
+}
+
+void loop() {
+  digitalWrite(2, HIGH);
+  delay(1000);
+  digitalWrite(2, LOW);
+  delay(1000);
+}
+
+Click Upload (→).
+If it uploads successfully, your board is ready.
+________________________________________
+Part 1: Wi-Fi Scanning
+Step 5: Open WiFi Scan Example
+Go to
+File
+    Examples
+        WiFi
+            WiFiScan
+
+or paste this code:
+#include "WiFi.h"
+
+void setup() {
+  Serial.begin(115200);
+
+  WiFi.mode(WIFI_STA);
+  WiFi.disconnect();
+
+  delay(1000);
+
+  Serial.println("Scanning...");
+}
+
+void loop() {
+
+  int n = WiFi.scanNetworks();
+
+  if (n == 0) {
+    Serial.println("No networks found");
+  }
+  else {
+
+    Serial.printf("%d networks found\n", n);
+
+    for (int i = 0; i < n; i++) {
+
+      Serial.print(i + 1);
+      Serial.print(": ");
+
+      Serial.print(WiFi.SSID(i));
+
+      Serial.print(" RSSI:");
+
+      Serial.print(WiFi.RSSI(i));
+
+      Serial.print(" dBm Channel:");
+
+      Serial.println(WiFi.channel(i));
+    }
+  }
+
+  Serial.println();
+
+  delay(5000);
+}
+
+________________________________________
+Step 6: Upload
+Click
+Upload
+
+Wait until you see
+Done Uploading
+
+________________________________________
+Step 7: Open Serial Monitor
+Go to
+Tools
+    Serial Monitor
+
+or press
+Ctrl + Shift + M
+
+Set the baud rate to
+115200
+
+You'll see output similar to:
+Scanning...
+
+7 networks found
+
+1: HomeWiFi RSSI:-48 dBm Channel:6
+2: OfficeWiFi RSSI:-70 dBm Channel:11
+3: PhoneHotspot RSSI:-62 dBm Channel:1
+
+The ESP32 will repeat the scan every 5 seconds.
+________________________________________
+Part 2: Bluetooth Scanning (BLE)
+The ESP32 can scan for nearby Bluetooth Low Energy (BLE) devices that are advertising.
+Step 8: Open BLE Scan Example
+Go to
+File
+    Examples
+        ESP32 BLE Arduino
+            BLE Scan
+
+If you don't see this example, ensure you have the latest ESP32 board package installed.
+Use this example code:
+#include <BLEDevice.h>
+#include <BLEUtils.h>
+#include <BLEScan.h>
+
+BLEScan* pBLEScan;
+
+void setup() {
+  Serial.begin(115200);
+
+  BLEDevice::init("");
+
+  pBLEScan = BLEDevice::getScan();
+
+  pBLEScan->setActiveScan(true);
+}
+
+void loop() {
+
+  BLEScanResults* results = pBLEScan->start(5, false);
+
+  Serial.print("Devices Found: ");
+
+  Serial.println(results->getCount());
+
+  pBLEScan->clearResults();
+
+  delay(3000);
+}
+
+________________________________________
+Step 9: Upload
+Upload the sketch.
+Open the Serial Monitor.
+You should see output like:
+Devices Found: 8
+Devices Found: 10
+Devices Found: 7
+
+Many BLE scan examples can also print details such as:
+●	MAC address
+●	Device name (if advertised)
+●	RSSI (signal strength)
+●	Service UUIDs
+________________________________________
+Understanding the Output
+For Wi-Fi scans, you'll typically see:
+Field	Meaning
+SSID	Wi-Fi network name
+RSSI	Signal strength (closer to 0 is stronger)
+Channel	Wi-Fi channel
+For BLE scans, you may see:
+Field	Meaning
+MAC Address	Bluetooth device identifier
+Name	Advertised device name (if present)
+RSSI	Signal strength
+UUID	Advertised services
+________________________________________
+Troubleshooting
+If upload fails with:
+Failed to connect to ESP32
+
+Try:
+●	Hold the BOOT button on the ESP32 while clicking Upload.
+●	Release BOOT when "Connecting..." appears in the Arduino IDE.
+If no COM port appears:
+●	Install the correct USB-to-serial driver for your board (commonly CP210x or CH340, depending on the USB chip).
+●	Try a different USB cable; some cables provide power only and do not carry data.
+If the Serial Monitor shows unreadable text:
+●	Verify the baud rate matches the sketch (e.g., 115200).
+Next steps
+Once you've confirmed basic scanning works, you can build on it by:
+●	Logging Wi-Fi scan results to a file or SD card.
+●	Displaying scan results on an OLED or LCD.
+●	Sending scan results to a local web server or MQTT broker.
+●	Creating a dashboard that visualizes nearby Wi-Fi and BLE devices over time.
+If you tell me your exact ESP32 model (for example, ESP32 DevKit V1, ESP32-WROOM-32, ESP32-S3, ESP32-C3, etc.) and which version of the Arduino IDE you're using, I can tailor the instructions and example code to your hardware.
+If you want to scan for nearby Bluetooth Low Energy (BLE) devices and print their advertised names, you can use the following Arduino sketch on an ESP32. It will list the names of nearby BLE devices that are advertising a name. Note that many BLE devices do not advertise a name, so some entries may show "(No Name)".
+#include <BLEDevice.h>
+#include <BLEUtils.h>
+#include <BLEScan.h>
+#include <BLEAdvertisedDevice.h>
+
+BLEScan* pBLEScan;
+
+class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks {
+  void onResult(BLEAdvertisedDevice advertisedDevice) {
+
+    Serial.println("----------------------");
+
+    if (advertisedDevice.haveName()) {
+      Serial.print("Device Name: ");
+      Serial.println(advertisedDevice.getName().c_str());
+    } else {
+      Serial.println("Device Name: (No Name)");
+    }
+
+    Serial.print("MAC Address: ");
+    Serial.println(advertisedDevice.getAddress().toString().c_str());
+
+    Serial.print("RSSI: ");
+    Serial.print(advertisedDevice.getRSSI());
+    Serial.println(" dBm");
+  }
+};
+
+void setup() {
+  Serial.begin(115200);
+
+  Serial.println("Starting BLE Scan...");
+
+  BLEDevice::init("");
+
+  pBLEScan = BLEDevice::getScan();
+  pBLEScan->setAdvertisedDeviceCallbacks(new MyAdvertisedDeviceCallbacks());
+
+  pBLEScan->setActiveScan(true);
+  pBLEScan->setInterval(100);
+  pBLEScan->setWindow(99);
+}
+
+void loop() {
+  Serial.println("\nScanning for 5 seconds...");
+
+  pBLEScan->start(5, false);
+  pBLEScan->clearResults();
+
+  delay(2000);
+}
+
+Expected Serial Monitor Output (115200 baud)
+Starting BLE Scan...
+
+Scanning for 5 seconds...
+
+----------------------
+Device Name: Redmi Buds 5
+MAC Address: AA:BB:CC:DD:EE:FF
+RSSI: -54 dBm
+
+----------------------
+Device Name: Galaxy Watch6
+MAC Address: 11:22:33:44:55:66
+RSSI: -61 dBm
+
+----------------------
+Device Name: (No Name)
+MAC Address: 88:99:AA:BB:CC:DD
+RSSI: -75 dBm
+
+Important Notes
+●	This code scans for Bluetooth Low Energy (BLE) devices only.
+●	It can only display the advertised name if the device includes one in its BLE advertisements.
+●	Many phones, laptops, headphones, and watches may not advertise a name continuously, or they may randomize their Bluetooth address for privacy.
+If instead you mean Classic Bluetooth device discovery (such as finding nearby phones, laptops, or speakers that are discoverable via Bluetooth Classic), let me know. The code is different and support depends on the specific ESP32 model.
+
+BLUETOOTH PROGRAM
+
+
+#include <BLEDevice.h>
+#include <BLEUtils.h>
+#include <BLEScan.h>
+#include <BLEAdvertisedDevice.h>
+
+int scanTime = 5; // In seconds
+BLEScan* pBLEScan;
+
+class MyAdvertisedDeviceCallbacks: public BLEAdvertisedDeviceCallbacks {
+    void onResult(BLEAdvertisedDevice advertisedDevice) {
+      // 1. Get the device name
+      String displayName  = advertisedDevice.getName();
+
+     // 2. If the name is blank, assign a placeholder
+      if (displayName .length() == 0) {
+        displayName = "[Unknown Device]";
+      }
+           
+      // 3. Get the MAC Address
+      String macAddress = advertisedDevice.getAddress().toString().c_str();
+
+      // 4. Print everything if RSSI is available
+      if (advertisedDevice.haveRSSI()) {
+        Serial.print("Name: ");
+        Serial.print(displayName);
+        Serial.print(" | MAC: ");
+        Serial.print(macAddress);
+        Serial.print(" | RSSI: ");
+        Serial.print(advertisedDevice.getRSSI());
+        Serial.println(" dBm");
+      }
+    }
+};
+
+void setup() {
+  Serial.begin(115200);
+  Serial.println("Scanning...");
+
+  BLEDevice::init("");
+  pBLEScan = BLEDevice::getScan(); //create new scan
+  pBLEScan->setAdvertisedDeviceCallbacks(new MyAdvertisedDeviceCallbacks());
+  pBLEScan->setActiveScan(true); //active scan uses more power but gets more results
+  pBLEScan->setInterval(100);
+  pBLEScan->setWindow(99);  // must be less or equal to setInterval
+}
+
+void loop() {
+  // Put the scan to work for the duration set in scanTime
+  BLEScanResults* foundDevices = pBLEScan->start(scanTime, false);
+  Serial.println("Scan done!");
+  pBLEScan->clearResults();   // delete results fromBLEScan buffer to release memory
+  delay(2000);
+}
+
+

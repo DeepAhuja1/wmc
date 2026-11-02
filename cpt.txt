@@ -1,0 +1,86 @@
+Network Configuration
+Parameter	Example Value
+Wireless Router	WRT300N
+SSID	As required
+Security	WPA2-PSK
+Password	As required
+Gateway IP	192.168.0.1
+Subnet Mask	255.255.255.0
+DHCP Start IP	192.168.0.2
+Maximum Users	10
+Connected Devices	Laptop0, Laptop1, etc.
+
+Procedure
+1.	Open Cisco Packet Tracer.
+2.	From Network Devices → Wireless Devices, select WRT300N Wireless Router and place it in the workspace.
+3.	From End Devices, select the required number of Laptop-PT devices.
+4.	Open the router’s Config tab, select Wireless, and configure the SSID.
+5.	Select WPA2-PSK or another available security option and enter a password.
+6.	Open the router’s GUI tab and configure the Internet Connection Type as DHCP.
+7.	Configure the gateway IP address and subnet mask. For example:
+o	Gateway IP: 192.168.0.1
+o	Subnet Mask: 255.255.255.0
+8.	Configure the DHCP start IP address, such as 192.168.0.2, and set the maximum number of users according to the requirement. Save the changes.
+9.	For each laptop, open the Physical tab, switch off the laptop, and install the WPC300N Wireless Ethernet Module in the LAN Ethernet port. Switch the laptop on.
+10.	Open the laptop’s Desktop → PC Wireless application. Select the Connect tab and connect to the configured wireless router.
+11.	Enter the router’s wireless password when prompted.
+12.	Repeat the same procedure for all remaining laptops.
+13.	Open Desktop → Command Prompt on Laptop0 and use the ping command to test connectivity with the router’s gateway IP address.
+14.	Use the ping command to test connectivity with the DHCP-assigned IP address of Laptop1 and other connected laptops.
+
+
+
+
+1.	Open Cisco packet Tracer
+
+2.	In Network Devices (Left Side Down ) In [ Wireless Devices ] select WRT300N Wireless Router0
+
+3.	In End Devices (Left Side Down) select Laptops as per required quantity.
+
+4.	In WRT300N Router go config then select wireless 
+
+	In wireless Give SSID Name as required and then select WPA2-PSK or any
+	
+	any other security and give password and close.
+
+5.	Now In WRT300N Router Go to GUI and in that Internet Connection Type should be DHCP Mode.
+
+6.	Give Gateway IP as per requirement 
+
+	i.e. default Gateway IP of Router Generally was 192.168.0.1 and subnet Mask 255.255.255.0 
+
+	but anyone can  change as per requirement give different IP (as per Class required) i.e. 192.168.1.1 or 192.168.30.1 etc.
+
+7.	Same IN WRT300N Router GUI give start IP Address i.e. 192.168.0.2 or 192.168.0.10 as per requirement and subnet mask default.
+	
+	(255.255.255.0) 
+
+	or select in range of (as per class required) 192.168.30.2 or 192.168.30.10 same range of Gateway (192.168.30.1) as per requirement and subnet mask
+
+	default (255.255.255.0).
+
+	select also Maximum number of Users 10 or 20 or 50 as per requirement and then scroll down and save changes.
+
+8.	Now in Laptop-PT Laptop0 in physical first switch off the laptop button and move LAN ethernet port  and 
+
+	In empty palace of LAN ethernet port put  WPC300N (Wireless Ethernet port)  by moving and then switch ON the Laptop button. 
+
+	now go to Desktop and in Desktop select PC Wireless click on  Connect tab next to Link Information Tab it will show
+
+	wireless Router name means SSID name and Signal Strength percentage then press connect tab next to Refresh Tab
+
+	it asks for password means (pre Shared-key) of Router which we have given  at the time of security (WPA2-PSK) or for any
+
+	other security which we have selected in wireless router and on screen show laptop-PT laptop0 connected with WRT300N Router.
+
+9.	Do same procedure for laptop-PT laptop1 laptop-PT laptop2 etc. as per required laptop.
+
+10.	In Laptop-PT laptop0 go to Desktop tab and select click on command line and in command line c:/ type ping command and give the 
+
+	Gateway Ip of Router i.e. 192.168.0.1 or 192.168.30.1 and check whether it is replay and same way give DHCP IP of Second Laptop-PT laptop1
+	
+	in Command Line by using ping command means ping 192.168.0.3 or Ping 192.168.30.3 and give ping for other laptops DHCP IP and check whether it reply.
+
+that is how to connect wireless router with wireless laptops in cisco packet tracer.
+
+
